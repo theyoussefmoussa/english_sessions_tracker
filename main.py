@@ -11,6 +11,6 @@ while True:
         print("Exiting the program.")
         break
     elif user_choice == '1':
-        full_name = input("Enter Full Name: ")
-        grade = input("Enter Grade (Fundamentals, Grade 1, Grade 2, Grade 3, Grade 4, Grade 5, Grade 6, Grade 7):")
-        add_student(full_name, grade)
+        add_student()
+    else: 
+        print("Invalid choice. Please try again.")
