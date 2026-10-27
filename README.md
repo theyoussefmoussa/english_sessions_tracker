@@ -61,7 +61,7 @@ The PostgreSQL schema and database connection are configured. Student creation a
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/theyoussefmoussa/english_sessions_tracker.git
    cd student_management
    ```
 

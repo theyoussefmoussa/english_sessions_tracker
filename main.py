@@ -1,10 +1,11 @@
-from students.operations import add_student, view_students
+from students.operations import add_student, view_students, view_student_by_id
 
 while True:
     print('-' * 50)
     print("Student Management System")
     print("1. Add Student")
     print("2. View Students")
+    print('3. View Student by ID')
     print('0. Exit')
     user_choice = input("Enter Your Choice: ")
     if user_choice == '0':
@@ -14,5 +15,7 @@ while True:
         add_student()
     elif user_choice == '2':
         view_students()
+    elif user_choice == '3':
+        view_student_by_id()
     else: 
         print("Invalid choice. Please try again.")

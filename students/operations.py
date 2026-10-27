@@ -66,3 +66,49 @@ def view_students():
             print(f"ID: {student[0]}, Name: {student[1]}, Grade: {student[2]}")
     else:
         print("No students found.")
+
+def get_student_by_id(student_id):
+    conn = get_connection()
+
+    if conn is None:
+        raise ConnectionError("Unable to connect to the database.")
+
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT student_id, full_name, grade
+                    FROM students
+                    WHERE student_id = %s
+                    """,
+                    (student_id,)
+                )
+                return cur.fetchone()
+    finally:
+        conn.close()
+
+def view_student_by_id():
+    while True:
+        student_id = input("Enter the student's ID: ").strip()
+
+        if not student_id.isdigit():
+            print("Invalid ID. Please enter a numeric value.")
+            continue
+
+        try:
+            student = get_student_by_id(int(student_id))
+
+            if student is None:
+                print(f"No student found with ID {student_id}.")
+            else:
+                print(
+                    f"ID: {student[0]}, "
+                    f"Name: {student[1]}, "
+                    f"Grade: {student[2]}"
+                )
+
+        except (psycopg.Error, ConnectionError) as error:
+            print(f"Unable to retrieve student: {error}")
+
+        break
