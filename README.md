@@ -29,17 +29,22 @@ A lightweight attendance management tool built with **Python** and **PostgreSQL*
 
 ```text
 student_management/
+│
 ├── database/
 │   ├── connection.py
 │   └── schema.sql
+│
 ├── students/
-│   └── __init__.py
-│   └── repository.py
-│   └── view.py
+│   ├── __init__.py
+│   ├── repository.py
+│   ├── view.py
 │   └── attendance_op.py
+│
 ├── utils/
 │   ├── constants.py
 │   └── validators.py
+│
+├── app.py
 ├── main.py
 ├── .env
 ├── .gitignore
