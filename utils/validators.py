@@ -51,30 +51,3 @@ def validate_student_username():
             print("Username can only contain lowercase letters, numbers, and underscores. Please try again.")
             continue
         return username
-
-def is_unique_username(username):
-    conn = get_connection()
-
-    if conn is None:
-        raise ConnectionError("Unable to connect to the database.")
-
-    try:
-        with conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    SELECT EXISTS (
-                        SELECT 1
-                        FROM students
-                        WHERE username = %s
-                    );
-                    """,
-                    (username,),
-                )
-
-                username_exists = cur.fetchone()[0]
-
-        return not username_exists
-
-    finally:
-        conn.close()

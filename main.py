@@ -1,5 +1,5 @@
-from students.operations import add_student, view_students, view_student_by_username
-
+from src.view import view_students, view_student_by_username
+from src.repository import add_student
 while True:
     print('-' * 50)
     print("Student Management System")

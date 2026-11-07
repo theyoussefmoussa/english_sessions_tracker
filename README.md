@@ -33,13 +33,16 @@ student_management/
 │   ├── connection.py
 │   └── schema.sql
 ├── students/
-│   └── operations.py
+│   └── __init__.py
+│   └── repository.py
+│   └── view.py
 ├── utils/
 │   ├── constants.py
 │   └── validators.py
 ├── main.py
 ├── .env
 ├── .gitignore
+├── requirements.txt
 └── README.md
 ```
 
