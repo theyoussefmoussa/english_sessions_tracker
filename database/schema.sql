@@ -18,3 +18,13 @@ CREATE TABLE students (
     username VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE attendance (
+    attendance_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username VARCHAR(50) NOT NULL REFERENCES students(username) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    status VARCHAR(10) NOT NULL CHECK (status IN ('Present', 'Absent')),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (username, date)
+);
