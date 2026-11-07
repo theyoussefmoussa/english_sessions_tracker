@@ -1,8 +1,15 @@
+import os
 from datetime import date
 
 import pandas as pd
 import psycopg
 import streamlit as st
+
+try:
+    if "DATABASE_URL" in st.secrets:
+        os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
+except FileNotFoundError:
+    pass
 
 from src.attendance_service import (
     DatabaseConnectionError,
@@ -12,7 +19,6 @@ from src.attendance_service import (
     insert_attendance,
     update_attendance,
 )
-
 st.set_page_config(page_title="Student Attendance Tracker", page_icon="📋")
 st.title("Student Attendance Tracker")
 
