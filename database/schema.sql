@@ -15,5 +15,6 @@ CREATE TABLE students (
     full_name VARCHAR(100) NOT NULL,
     grade student_grade NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    username VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

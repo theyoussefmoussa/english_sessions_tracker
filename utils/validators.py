@@ -1,3 +1,7 @@
+import re
+
+import psycopg
+from database.connection import get_connection
 from utils.constants import GRADES, MINIMUM_FULL_NAME_LENGTH
 
 def validate_full_name():
@@ -31,3 +35,46 @@ def validate_grade():
             print(f"Grade must be one of the following: {', '.join(GRADES)}")
             continue
         return grade
+
+
+def validate_student_username():
+    while True:
+        username = input("Enter the student's username: ").strip().lower()
+        if not username:
+            print("Username cannot be empty. Please try again.")
+            continue
+        if len(username) > 50:
+            print("Username cannot exceed 50 characters. Please try again.")
+            continue
+
+        if not re.match(r'^[a-z0-9_]+$', username):
+            print("Username can only contain lowercase letters, numbers, and underscores. Please try again.")
+            continue
+        return username
+
+def is_unique_username(username):
+    conn = get_connection()
+
+    if conn is None:
+        raise ConnectionError("Unable to connect to the database.")
+
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM students
+                        WHERE username = %s
+                    );
+                    """,
+                    (username,),
+                )
+
+                username_exists = cur.fetchone()[0]
+
+        return not username_exists
+
+    finally:
+        conn.close()

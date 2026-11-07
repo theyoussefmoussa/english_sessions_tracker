@@ -1,16 +1,31 @@
 import psycopg
 
-from utils.validators import validate_full_name, validate_grade
+from utils.validators import (
+    is_unique_username,
+    validate_full_name,
+    validate_grade,
+    validate_student_username,
+)
 from database.connection import get_connection
-
-
 def add_student():
     full_name = validate_full_name()
     grade = validate_grade()
 
+    while True:
+        username = validate_student_username()
+
+        try:
+            if is_unique_username(username):
+                break
+
+            print("Username is already taken. Please choose a different username.")
+
+        except ConnectionError as error:
+            print(error)
+            return
+
     conn = get_connection()
 
-    # Check if the connection was successful 
     if conn is None:
         print("Unable to connect to the database. Please try again.")
         return
@@ -19,22 +34,25 @@ def add_student():
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "INSERT INTO students (full_name, grade) VALUES (%s, %s)",
-                    (full_name, grade)
+                    """
+                    INSERT INTO students (full_name, grade, username)
+                    VALUES (%s, %s, %s)
+                    """,
+                    (full_name, grade, username),
                 )
 
         print(f"Student {full_name} added successfully!")
+        print(f"Student username: {username}")
 
     except psycopg.Error as error:
         print(f"Failed to add student: {error}")
 
     finally:
         conn.close()
-
+        
 def get_students():
     conn = get_connection()
 
-    # Check if the connection was successful 
     if conn is None:
         print("Unable to connect to the database. Please try again.")
         return None
@@ -42,7 +60,13 @@ def get_students():
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT student_id, full_name, grade FROM students ORDER BY student_id;")
+                cur.execute(
+                    """
+                    SELECT student_id, full_name, username, grade
+                    FROM students
+                    ORDER BY student_id;
+                    """
+                )
                 students = cur.fetchall()
 
         return students
@@ -54,6 +78,7 @@ def get_students():
     finally:
         conn.close()
 
+
 def view_students():
     students = get_students()
 
@@ -62,12 +87,20 @@ def view_students():
 
     if students:
         print("List of Students:")
+
         for student in students:
-            print(f"ID: {student[0]}, Name: {student[1]}, Grade: {student[2]}")
+            print(
+                f"ID: {student[0]}, "
+                f"Name: {student[1]}, "
+                f"Username: {student[2]}, "
+                f"Grade: {student[3]}"
+            )
     else:
         print("No students found.")
 
-def get_student_by_id(student_id):
+
+def get_student_by_username(username):
+    username = username.strip().lower()
     conn = get_connection()
 
     if conn is None:
@@ -80,27 +113,30 @@ def get_student_by_id(student_id):
                     """
                     SELECT student_id, full_name, grade
                     FROM students
-                    WHERE student_id = %s
+                    WHERE username = %s
                     """,
-                    (student_id,)
+                    (username,),
                 )
+
                 return cur.fetchone()
+
     finally:
         conn.close()
 
-def view_student_by_id():
-    while True:
-        student_id = input("Enter the student's ID: ").strip()
 
-        if not student_id.isdigit():
-            print("Invalid ID. Please enter a numeric value.")
+def view_student_by_username():
+    while True:
+        username = input("Enter the student's username: ").strip().lower()
+
+        if not username:
+            print("Username cannot be empty. Please try again.")
             continue
 
         try:
-            student = get_student_by_id(int(student_id))
+            student = get_student_by_username(username)
 
             if student is None:
-                print(f"No student found with ID {student_id}.")
+                print(f"No student found with username {username}.")
             else:
                 print(
                     f"ID: {student[0]}, "
