@@ -4,8 +4,6 @@ Unlike the CLI versions, these functions never call input() or print().
 They take plain arguments, return data, and raise exceptions, so the
 Streamlit UI decides how to display results and errors.
 """
-import psycopg
-
 from database.connection import get_connection
 
 

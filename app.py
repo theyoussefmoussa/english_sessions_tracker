@@ -5,6 +5,7 @@ import pandas as pd
 import psycopg
 import streamlit as st
 
+from src.payment_ui import render_payments
 from src.roll_call import render_roll_call
 
 try:
@@ -28,8 +29,9 @@ st.title("Student Attendance Tracker")
 if "pending_overwrite" not in st.session_state:
     st.session_state.pending_overwrite = None
 
-mark_tab, roll_tab, view_tab = st.tabs(["Mark Attendance", "Class Roll Call", "View Attendance"])
-
+mark_tab, roll_tab, manage_tab, payments_tab, view_tab = st.tabs(
+    ["Mark Attendance", "Class Roll Call", "Manage Students", "Payments", "View Attendance"]
+)
 # ---------------------------------------------------------------- Mark tab
 with mark_tab:
     st.subheader("Mark attendance")
@@ -140,3 +142,6 @@ with view_tab:
 # ---------------------------------------------------------------- Roll Call tab
 with roll_tab:
     render_roll_call()
+
+with payments_tab:
+    render_payments()

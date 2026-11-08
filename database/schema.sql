@@ -28,3 +28,15 @@ CREATE TABLE attendance (
 
     UNIQUE (username, date)
 );
+
+CREATE TABLE payment (
+    payment_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username VARCHAR(50) NOT NULL REFERENCES students(username) ON DELETE RESTRICT,
+    date DATE NOT NULL,
+    period_month DATE NOT NULL CHECK (EXTRACT(DAY FROM period_month) = 1),
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('Cash', 'Bank Transfer', 'Wallet')),
+    notes TEXT,
+    received_by VARCHAR(10) NOT NULL CHECK (received_by IN ('Youssef', 'Mama')),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
