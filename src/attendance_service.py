@@ -96,3 +96,40 @@ def get_all_attendance():
                 return columns, cur.fetchall()
     finally:
         conn.close()
+
+def get_attendance_for_date(date):
+    """Return {username: status} for every record on the given date."""
+    conn = _connect()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT username, status FROM attendance
+                    WHERE date = %s;
+                """, (date,))
+                return dict(cur.fetchall())
+    finally:
+        conn.close()
+
+
+def save_bulk_attendance(date, statuses):
+    """Insert or update attendance for many students in ONE transaction.
+
+    statuses: {username: 'Present' | 'Absent'}
+    Existing records for that date are updated, new ones are inserted.
+    Returns the number of rows saved. If any row fails, nothing is saved.
+    """
+    rows = [(username, date, status) for username, status in statuses.items()]
+    conn = _connect()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.executemany("""
+                    INSERT INTO attendance (username, date, status)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (username, date)
+                    DO UPDATE SET status = EXCLUDED.status;
+                """, rows)
+        return len(rows)
+    finally:
+        conn.close()

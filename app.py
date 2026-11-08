@@ -5,6 +5,8 @@ import pandas as pd
 import psycopg
 import streamlit as st
 
+from src.roll_call import render_roll_call
+
 try:
     if "DATABASE_URL" in st.secrets:
         os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
@@ -26,8 +28,7 @@ st.title("Student Attendance Tracker")
 if "pending_overwrite" not in st.session_state:
     st.session_state.pending_overwrite = None
 
-mark_tab, view_tab = st.tabs(["Mark Attendance", "View Attendance"])
-
+mark_tab, roll_tab, view_tab = st.tabs(["Mark Attendance", "Class Roll Call", "View Attendance"])
 
 # ---------------------------------------------------------------- Mark tab
 with mark_tab:
@@ -134,3 +135,8 @@ with view_tab:
         st.error(str(e))
     except psycopg.Error as e:
         st.error(f"Database error: {e}")
+
+
+# ---------------------------------------------------------------- Roll Call tab
+with roll_tab:
+    render_roll_call()
